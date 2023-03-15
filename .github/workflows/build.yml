@@ -36,7 +36,6 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ github.ref_name }}-gradle-${{ hashFiles('gradle.properties', 'gradlew', 'gradle/**', 'build-logic/**', '**.gradle.kts') }}
-          restore-keys: ${{ github.ref_name }}-gradle-
 
       - name: Build
         uses: gradle/gradle-build-action@v2
