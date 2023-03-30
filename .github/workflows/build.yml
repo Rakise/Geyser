@@ -115,9 +115,8 @@ jobs:
 
       - name: Publish to Modrinth
         uses: gradle/gradle-build-action@v2
-        if: ${{ success() && github.repository == 'GeyserMC/Geyser' && github.ref_name == 'master' }}
         env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          MODRINTH_TOKEN: 'some_invalid_value'
         with:
           arguments: fabric:modrinth
           gradle-home-cache-cleanup: true
