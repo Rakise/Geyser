@@ -118,7 +118,7 @@ jobs:
         env:
           MODRINTH_TOKEN: 'some_invalid_value'
         with:
-          arguments: fabric:modrinth -DMODRINTH_TOKEN='some_invalid_value'
+          arguments: fabric:modrinth --no-daemon
           gradle-home-cache-cleanup: true
           
       - name: Notify Discord
