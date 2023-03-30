@@ -94,6 +94,7 @@ tasks {
 }
 
 modrinth {
+    token.set(System.getenv("MODRINTH_TOKEN"))
     projectId.set("wKkoqHrH")
     versionNumber.set(project.version as String + "-" + System.getenv("GITHUB_RUN_NUMBER"))
     versionType.set("beta")
