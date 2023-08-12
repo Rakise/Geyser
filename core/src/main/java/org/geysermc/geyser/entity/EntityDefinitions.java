@@ -31,6 +31,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.FloatEnt
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag;
+import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.*;
 import org.geysermc.geyser.entity.type.living.*;
 import org.geysermc.geyser.entity.type.living.animal.*;
@@ -459,6 +460,12 @@ public final class EntityDefinitions {
         ARMOR_STAND = EntityDefinition.inherited(ArmorStandEntity::new, livingEntityBase)
                 .type(EntityType.ARMOR_STAND)
                 .height(1.975f).width(0.5f)
+                .properties(new GeyserEntityProperties.Builder()
+                    .addFloatProperty("geyser:rotation_x")
+                    .addFloatProperty("geyser:rotation_y")
+                    .addFloatProperty("geyser:rotation_z")
+                    .entityType("minecraft:armor_stand")
+                    .build())
                 .addTranslator(MetadataType.BYTE, ArmorStandEntity::setArmorStandFlags)
                 .addTranslator(MetadataType.ROTATION, ArmorStandEntity::setHeadRotation)
                 .addTranslator(MetadataType.ROTATION, ArmorStandEntity::setBodyRotation)

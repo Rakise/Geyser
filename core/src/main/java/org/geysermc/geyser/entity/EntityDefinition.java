@@ -160,6 +160,9 @@ public record EntityDefinition<T extends Entity>(EntityFactory<T> factory, Entit
             if (register && definition.entityType() != null) {
                 Registries.ENTITY_DEFINITIONS.get().putIfAbsent(definition.entityType(), definition);
                 Registries.JAVA_ENTITY_IDENTIFIERS.get().putIfAbsent("minecraft:" + type.name().toLowerCase(Locale.ROOT), definition);
+                if (definition.registeredProperties() != null) {
+                    Registries.BEDROCK_ENTITY_PROPERTIES.get().add(definition.registeredProperties().toNbtMap());
+                }
             }
             return definition;
         }

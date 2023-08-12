@@ -126,7 +126,7 @@ public class Entity implements GeyserEntity {
     @Setter(AccessLevel.PROTECTED) // For players
     private boolean flagsDirty = false;
 
-    protected final GeyserEntityPropertyManager propertyManager = new GeyserEntityPropertyManager(definition.registeredProperties());
+    protected final GeyserEntityPropertyManager propertyManager;
 
     public Entity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         this.session = session;
@@ -144,8 +144,8 @@ public class Entity implements GeyserEntity {
 
         setPosition(position);
         setAirSupply(getMaxAir());
-
         initializeMetadata();
+        this.propertyManager = new GeyserEntityPropertyManager(definition.registeredProperties());
     }
 
     /**
