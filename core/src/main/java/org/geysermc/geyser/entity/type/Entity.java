@@ -50,6 +50,7 @@ import org.cloudburstmc.protocol.bedrock.packet.SetEntityDataPacket;
 import org.geysermc.geyser.api.entity.type.GeyserEntity;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.GeyserDirtyMetadata;
+import org.geysermc.geyser.entity.properties.GeyserEntityPropertyManager;
 import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.geyser.translator.text.MessageTranslator;
 import org.geysermc.geyser.util.EntityUtils;
@@ -125,6 +126,8 @@ public class Entity implements GeyserEntity {
     @Setter(AccessLevel.PROTECTED) // For players
     private boolean flagsDirty = false;
 
+    protected final GeyserEntityPropertyManager propertyManager = new GeyserEntityPropertyManager(definition.registeredProperties());
+
     public Entity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         this.session = session;
 
@@ -176,6 +179,8 @@ public class Entity implements GeyserEntity {
         addEntityPacket.setHeadRotation(headYaw);
         addEntityPacket.setBodyRotation(yaw); // TODO: This should be bodyYaw
         addEntityPacket.getMetadata().putFlags(flags);
+        addEntityPacket.getProperties().getFloatProperties().addAll(propertyManager.floatProperties());
+        addEntityPacket.getProperties().getIntProperties().addAll(propertyManager.intProperties());
         dirtyMetadata.apply(addEntityPacket.getMetadata());
         addAdditionalSpawnData(addEntityPacket);
 
@@ -355,6 +360,20 @@ public class Entity implements GeyserEntity {
                 flagsDirty = false;
             }
             dirtyMetadata.apply(entityDataPacket.getMetadata());
+            session.sendUpstreamPacket(entityDataPacket);
+        }
+    }
+
+    public void updateBedrockEntityProperties() {
+        if (!valid) {
+            return;
+        }
+
+        if (propertyManager.hasFloatProperties() || propertyManager.hasIntProperties()) {
+            SetEntityDataPacket entityDataPacket = new SetEntityDataPacket();
+            entityDataPacket.setRuntimeEntityId(geyserId);
+            entityDataPacket.getProperties().getFloatProperties().addAll(propertyManager.floatProperties());
+            entityDataPacket.getProperties().getIntProperties().addAll(propertyManager.intProperties());
             session.sendUpstreamPacket(entityDataPacket);
         }
     }
