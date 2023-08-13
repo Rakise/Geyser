@@ -134,7 +134,7 @@ public class GeyserEntityProperties {
             return this;
         }
 
-        public Builder addBoolProperty(@NonNull String name) {
+        public Builder addBooleanProperty(@NonNull String name) {
             if (propertyIndices.containsKey(name)) {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
