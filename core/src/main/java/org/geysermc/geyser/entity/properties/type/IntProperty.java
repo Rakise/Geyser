@@ -26,8 +26,6 @@
 package org.geysermc.geyser.entity.properties.type;
 
 import org.cloudburstmc.nbt.NbtMap;
-import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.cloudburstmc.nbt.NbtType;
 
 public class IntProperty implements PropertyType {
     private final String name;
@@ -41,11 +39,12 @@ public class IntProperty implements PropertyType {
     }
 
     @Override
-    public NbtMapBuilder addToNbtMap(NbtMapBuilder builder) {
-        return builder.putList("property:" + name, NbtType.COMPOUND, NbtMap.builder()
-                .putInt("max", max)
-                .putInt("min", min)
-                .putInt("type", 0)
-                .build());
+    public NbtMap nbtMap() {
+        return NbtMap.builder()
+            .putString("name", name)
+            .putInt("max", max)
+            .putInt("min", min)
+            .putInt("type", 0)
+            .build();
     }
 }

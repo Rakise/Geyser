@@ -41,11 +41,12 @@ public class FloatProperty implements PropertyType {
     }
 
     @Override
-    public NbtMapBuilder addToNbtMap(NbtMapBuilder builder) {
-        return builder.putList("property:" + name, NbtType.COMPOUND, NbtMap.builder()
-                .putFloat("max", max)
-                .putFloat("min", min)
-                .putInt("type", 1)
-                .build());
+    public NbtMap nbtMap() {
+        return NbtMap.builder()
+            .putString("name", name)
+            .putFloat("max", max)
+            .putFloat("min", min)
+            .putInt("type", 1)
+            .build();
     }
 }

@@ -26,8 +26,6 @@
 package org.geysermc.geyser.entity.properties.type;
 
 import org.cloudburstmc.nbt.NbtMap;
-import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.cloudburstmc.nbt.NbtType;
 
 public class BooleanProperty implements PropertyType {
     private final String name;
@@ -37,9 +35,10 @@ public class BooleanProperty implements PropertyType {
     }
 
     @Override
-    public NbtMapBuilder addToNbtMap(NbtMapBuilder builder) {
-        return builder.putList("property:" + name, NbtType.COMPOUND, NbtMap.builder()
-                .putInt("type", 2)
-                .build());
+    public NbtMap nbtMap() {
+        return NbtMap.builder()
+            .putString("name", name)
+            .putInt("type", 2)
+            .build();
     }
 }

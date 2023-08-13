@@ -41,11 +41,12 @@ public class EnumProperty implements PropertyType {
     }
 
     @Override
-    public NbtMapBuilder addToNbtMap(NbtMapBuilder builder) {
-        return builder.putList("property:" + name, NbtType.COMPOUND, NbtMap.builder()
-                .putList("values", NbtType.STRING, values)
-                .putInt("type", 3)
-                .build());
+    public NbtMap nbtMap() {
+        return NbtMap.builder()
+            .putString("name", name)
+            .putList("values", NbtType.STRING, values)
+            .putInt("type", 3)
+            .build();
     }
 
     public int getIndex(String value) {

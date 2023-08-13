@@ -374,7 +374,6 @@ public class Entity implements GeyserEntity {
             entityDataPacket.setRuntimeEntityId(geyserId);
             propertyManager.applyIntProperties(entityDataPacket.getProperties().getIntProperties());
             propertyManager.applyFloatProperties(entityDataPacket.getProperties().getFloatProperties());
-            session.getGeyser().getLogger().info(entityDataPacket.toString());
             session.sendUpstreamPacket(entityDataPacket);
         }
     }

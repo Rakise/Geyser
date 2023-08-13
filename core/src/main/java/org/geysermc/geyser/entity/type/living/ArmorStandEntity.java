@@ -167,8 +167,8 @@ public class ArmorStandEntity extends LivingEntity {
 
         // The following values don't do anything on normal Bedrock.
         // But if given a resource pack, then we can use these values to control armor stand visual properties
-        propertyManager.add("geyser:arms", (xd & 0x04) == 0x04);
-        propertyManager.add("geyser:no_bp", (xd & 0x08) != 0x08);
+        propertyManager.add("geyser:arms", (xd & 0x04) != 0x04);
+        propertyManager.add("geyser:no_bp", (xd & 0x08) == 0x08);
         propertyManager.add("geyser:small", isSmall);
         updateBedrockEntityProperties();
     }

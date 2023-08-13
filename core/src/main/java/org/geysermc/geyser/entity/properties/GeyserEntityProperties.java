@@ -32,6 +32,7 @@ import lombok.ToString;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.geyser.entity.properties.type.BooleanProperty;
 import org.geysermc.geyser.entity.properties.type.EnumProperty;
 import org.geysermc.geyser.entity.properties.type.FloatProperty;
@@ -57,9 +58,13 @@ public class GeyserEntityProperties {
 
     public NbtMap toNbtMap() {
         NbtMapBuilder mapBuilder = NbtMap.builder();
+        List<NbtMap> nbtProperties = new ArrayList<>();
+        
         for (PropertyType property : properties) {
-            mapBuilder = property.addToNbtMap(mapBuilder);
+            nbtProperties.add(property.nbtMap());
         }
+        mapBuilder.putList("properties", NbtType.COMPOUND, nbtProperties);
+
         return mapBuilder.putString("type", entityType).build();
     }
 

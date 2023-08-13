@@ -25,8 +25,8 @@
 
 package org.geysermc.geyser.entity.properties.type;
 
-import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtMap;
 
 public interface PropertyType {
-    NbtMapBuilder addToNbtMap(NbtMapBuilder builder);
+    NbtMap nbtMap();
 }
