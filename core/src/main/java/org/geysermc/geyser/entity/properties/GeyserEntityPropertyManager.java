@@ -108,22 +108,28 @@ public class GeyserEntityPropertyManager {
     }
 
     public boolean hasFloatProperties() {
-        return !floatEntityProperties.isEmpty();
+        return !this.floatEntityProperties.isEmpty();
     }
 
     public boolean hasIntProperties() {
-        return !intEntityProperties.isEmpty();
+        return !this.intEntityProperties.isEmpty();
     }
 
     public List<IntEntityProperty> intProperties() {
-        List<IntEntityProperty> intEntityProperties = new ArrayList<>(this.intEntityProperties);
-        this.intEntityProperties.clear();
-        return intEntityProperties;
+        return this.intEntityProperties;
+    }
+
+    public void applyIntProperties(List<IntEntityProperty> properties) {
+        properties.addAll(intEntityProperties);
+        intEntityProperties.clear();
     }
 
     public List<FloatEntityProperty> floatProperties() {
-        List<FloatEntityProperty> floatEntityProperties = new ArrayList<>(this.floatEntityProperties);
-        this.floatEntityProperties.clear();
-        return floatEntityProperties;
+        return this.floatEntityProperties;
+    }
+
+    public void applyFloatProperties(List<FloatEntityProperty> properties) {
+        properties.addAll(floatEntityProperties);
+        floatEntityProperties.clear();
     }
 }

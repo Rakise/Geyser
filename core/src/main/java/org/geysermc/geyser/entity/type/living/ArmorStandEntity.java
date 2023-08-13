@@ -167,62 +167,49 @@ public class ArmorStandEntity extends LivingEntity {
 
         // The following values don't do anything on normal Bedrock.
         // But if given a resource pack, then we can use these values to control armor stand visual properties
-        setFlag(EntityFlag.ANGRY, (xd & 0x04) != 0x04); // Has arms
-        setFlag(EntityFlag.ADMIRING, (xd & 0x08) == 0x08); // Has no baseplate
-        setFlag(EntityFlag.BABY, isSmall); // Is small (for setting head scale)
+        propertyManager.add("geyser:arms", (xd & 0x04) == 0x04);
+        propertyManager.add("geyser:no_bp", (xd & 0x08) != 0x08);
+        propertyManager.add("geyser:small", isSmall);
+        updateBedrockEntityProperties();
     }
 
     public void setHeadRotation(EntityMetadata<Vector3f, ?> entityMetadata) {
-        onRotationUpdate(EntityDataTypes.MARK_VARIANT, EntityFlag.INTERESTED, EntityFlag.CHARGED, EntityFlag.POWERED, entityMetadata.getValue());
+        onRotationUpdate("geyser:he_rx", "geyser:he_ry", "geyser:he_rz", entityMetadata.getValue());
     }
 
     public void setBodyRotation(EntityMetadata<Vector3f, ?> entityMetadata) {
-        onRotationUpdate(EntityDataTypes.VARIANT, EntityFlag.IN_LOVE, EntityFlag.CELEBRATING, EntityFlag.CELEBRATING_SPECIAL, entityMetadata.getValue());
+        onRotationUpdate("geyser:bo_rx", "geyser:bo_ry", "geyser:bo_rz", entityMetadata.getValue());
     }
 
     public void setLeftArmRotation(EntityMetadata<Vector3f, ?> entityMetadata) {
-        onRotationUpdate(EntityDataTypes.TRADE_TIER, EntityFlag.CHARGING, EntityFlag.CRITICAL, EntityFlag.DANCING, entityMetadata.getValue());
+        onRotationUpdate("geyser:la_rx", "geyser:la_ry", "geyser:la_rz", entityMetadata.getValue());
     }
 
     public void setRightArmRotation(EntityMetadata<Vector3f, ?> entityMetadata) {
-        onRotationUpdate(EntityDataTypes.MAX_TRADE_TIER, EntityFlag.ELDER, EntityFlag.EMOTING, EntityFlag.IDLING, entityMetadata.getValue());
+        onRotationUpdate("geyser:ra_rx", "geyser:ra_ry", "geyser:ra_rz", entityMetadata.getValue());
     }
 
     public void setLeftLegRotation(EntityMetadata<Vector3f, ?> entityMetadata) {
-        onRotationUpdate(EntityDataTypes.SKIN_ID, EntityFlag.IS_ILLAGER_CAPTAIN, EntityFlag.IS_IN_UI, EntityFlag.LINGERING, entityMetadata.getValue());
+        onRotationUpdate("geyser:ll_rx", "geyser:ll_ry", "geyser:ll_rz", entityMetadata.getValue());
     }
 
     public void setRightLegRotation(EntityMetadata<Vector3f, ?> entityMetadata) {
-        onRotationUpdate(EntityDataTypes.HURT_DIRECTION, EntityFlag.IS_PREGNANT, EntityFlag.SHEARED, EntityFlag.STALKING, entityMetadata.getValue());
+        onRotationUpdate("geyser:rl_rx", "geyser:rl_ry", "geyser:rl_rz", entityMetadata.getValue());
     }
 
     /**
-     * Updates rotation on the armor stand by hijacking other unused Bedrock entity data/flags.
-     * Do note: as of recent Bedrock versions there is a custom entity data system that can be replaced with this,
-     * but at this time there is no need to implement this.
-     *
-     * @param dataLeech the entity data to "leech" off of that stores a compressed version of the rotation
-     * @param negativeXToggle the flag to set true if the X value of rotation is negative
-     * @param negativeYToggle the flag to set true if the Y value of rotation is negative
-     * @param negativeZToggle the flag to set true if the Z value of rotation is negative
-     * @param rotation the Java rotation value
+     * Update the rotation properties for GeyserOptionalPack.
+     * 
+     * @param xProp the x property to update 
+     * @param yProp the y property to update
+     * @param zProp the z property to update
+     * @param rotation the rotation of the armor stand
      */
-    private void onRotationUpdate(EntityDataType dataLeech, EntityFlag negativeXToggle, EntityFlag negativeYToggle, EntityFlag negativeZToggle, Vector3f rotation) {
-        // Indicate that rotation should be checked
-        setFlag(EntityFlag.BRIBED, true);
-
-        int rotationX = MathUtils.wrapDegreesToInt(rotation.getX());
-        int rotationY = MathUtils.wrapDegreesToInt(rotation.getY());
-        int rotationZ = MathUtils.wrapDegreesToInt(rotation.getZ());
-        // The top bit acts like binary and determines if each rotation goes above 100
-        // We don't do this for the negative values out of concerns of the number being too big
-        int topBit = (Math.abs(rotationX) >= 100 ? 4 : 0) + (Math.abs(rotationY) >= 100 ? 2 : 0) + (Math.abs(rotationZ) >= 100 ? 1 : 0);
-        int value = (topBit * 1000000) + ((Math.abs(rotationX) % 100) * 10000) + ((Math.abs(rotationY) % 100) * 100) + (Math.abs(rotationZ) % 100);
-        dirtyMetadata.put(dataLeech, value);
-        // Set the entity flags if a value is negative
-        setFlag(negativeXToggle, rotationX < 0);
-        setFlag(negativeYToggle, rotationY < 0);
-        setFlag(negativeZToggle, rotationZ < 0);
+    private void onRotationUpdate(String xProp, String yProp, String zProp, Vector3f rotation) {
+        propertyManager.add(xProp, MathUtils.wrapDegrees(rotation.getX()));
+        propertyManager.add(yProp, MathUtils.wrapDegrees(rotation.getY()));
+        propertyManager.add(zProp, MathUtils.wrapDegrees(rotation.getZ()));
+        updateBedrockEntityProperties();
     }
 
     @Override

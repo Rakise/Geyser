@@ -1582,7 +1582,6 @@ public class GeyserSession implements GeyserConnection, GeyserCommandSource {
 
     private void syncEntityProperties() {
         for (NbtMap nbtMap : Registries.BEDROCK_ENTITY_PROPERTIES.get()) {
-            this.getGeyser().getLogger().info("Syncing entity property:" + nbtMap.toString());
             SyncEntityPropertyPacket syncEntityPropertyPacket = new SyncEntityPropertyPacket();
             syncEntityPropertyPacket.setData(nbtMap);
             upstream.sendPacket(syncEntityPropertyPacket);
