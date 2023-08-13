@@ -25,7 +25,12 @@
 
 package org.geysermc.geyser.entity.type.display;
 
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
 import org.cloudburstmc.math.vector.Vector3f;
+import org.cloudburstmc.math.vector.Vector4f;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
@@ -56,6 +61,17 @@ public class DisplayEntity extends Entity {
         handPacket.setContainerId(ContainerId.INVENTORY);
 
         session.sendUpstreamPacket(handPacket);
+    }
+
+    public void setTranslation(EntityMetadata<Vector3f, ?> entityMetadata) {
+        hackRotation(entityMetadata.getValue().getX(), entityMetadata.getValue().getY(), entityMetadata.getValue().getZ());
+    }
+
+    public void hackRotation(float x, float y, float z) {
+        propertyManager.add("geyser:rotation_x", x);
+        propertyManager.add("geyser:rotation_y", y);
+        propertyManager.add("geyser:rotation_z", z);
+        updateBedrockEntityProperties();
     }
 
 }

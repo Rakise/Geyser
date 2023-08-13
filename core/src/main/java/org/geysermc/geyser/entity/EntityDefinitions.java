@@ -34,6 +34,7 @@ import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.*;
 import org.geysermc.geyser.entity.type.display.BlockDisplayEntity;
+import org.geysermc.geyser.entity.type.display.DisplayEntity;
 import org.geysermc.geyser.entity.type.display.ItemDisplayEntity;
 import org.geysermc.geyser.entity.type.display.TextDisplayEntity;
 import org.geysermc.geyser.entity.type.living.*;
@@ -308,19 +309,19 @@ public final class EntityDefinitions {
                 .addInt("geyser:state_id")
                 .addInt("geyser:start_interpolation")
                 .addFloat("geyser:interpolation_duration")
-                .addFloat("geyser:rotation_x")
-                .addFloat("geyser:rotation_y")
-                .addFloat("geyser:rotation_z")
-                .addFloat("geyser:translation_x")
-                .addFloat("geyser:translation_y")
-                .addFloat("geyser:translation_z")
-                .addFloat("geyser:scale_x")
-                .addFloat("geyser:scale_y")
-                .addFloat("geyser:scale_z");
-            EntityDefinition<Entity> displayBase = EntityDefinition.inherited(entityBase.factory(), entityBase)
+                .addFloat("geyser:rotation_x", -180F, 180F)
+                .addFloat("geyser:rotation_y", -180F, 180F)
+                .addFloat("geyser:rotation_z", -180F, 180F)
+                .addFloat("geyser:translation_x", -180F, 180F)
+                .addFloat("geyser:translation_y", -180F, 180F)
+                .addFloat("geyser:translation_z", -180F, 180F)
+                .addFloat("geyser:scale_x", -180F, 180F)
+                .addFloat("geyser:scale_y", -180F, 180F)
+                .addFloat("geyser:scale_z", -180F, 180F);
+            EntityDefinition<DisplayEntity> displayBase = EntityDefinition.inherited(DisplayEntity::new, entityBase)
                     .addTranslator(null) // Interpolation start ticks
                     .addTranslator(null) // Interpolation duration ID
-                    .addTranslator(null) // Translation
+                    .addTranslator(MetadataType.VECTOR3, DisplayEntity::setTranslation) // Translation
                     .addTranslator(null) // Scale
                     .addTranslator(null) // Left rotation
                     .addTranslator(null) // Right rotation
