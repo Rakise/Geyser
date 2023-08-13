@@ -26,7 +26,9 @@
 package org.geysermc.geyser.entity.type.display;
 
 import org.cloudburstmc.math.vector.Vector3f;
-import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.type.Entity;
 import org.geysermc.geyser.session.GeyserSession;
@@ -35,12 +37,25 @@ import java.util.UUID;
 
 public class DisplayEntity extends Entity {
 
-    public DisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
+    protected ItemData hand = ItemData.AIR;
+
+    public DisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition,
+            Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
     }
 
-    public void setProperties() {
-        dirtyMetadata.put(EntityDataTypes.BASE_RUNTIME_ID, "");
+    public void updateMainHand(GeyserSession session) {
+        if (!valid)
+            return;
+
+        MobEquipmentPacket handPacket = new MobEquipmentPacket();
+        handPacket.setRuntimeEntityId(geyserId);
+        handPacket.setItem(hand);
+        handPacket.setHotbarSlot(-1);
+        handPacket.setInventorySlot(0);
+        handPacket.setContainerId(ContainerId.INVENTORY);
+
+        session.sendUpstreamPacket(handPacket);
     }
-    
+
 }

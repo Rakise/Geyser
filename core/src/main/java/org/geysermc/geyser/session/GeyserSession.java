@@ -85,6 +85,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.value.qual.IntRange;
 import org.cloudburstmc.math.vector.*;
 import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.BedrockDisconnectReasons;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.data.*;
@@ -117,6 +119,7 @@ import org.geysermc.geyser.configuration.EmoteOffhandWorkaroundOption;
 import org.geysermc.geyser.configuration.GeyserConfiguration;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.EntityDefinitions;
+import org.geysermc.geyser.entity.GeyserEntityIdentifier;
 import org.geysermc.geyser.entity.attribute.GeyserAttributeType;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.Entity;
@@ -652,9 +655,7 @@ public class GeyserSession implements GeyserConnection, GeyserCommandSource {
         biomeDefinitionListPacket.setDefinitions(Registries.BIOMES_NBT.get());
         upstream.sendPacket(biomeDefinitionListPacket);
 
-        AvailableEntityIdentifiersPacket entityPacket = new AvailableEntityIdentifiersPacket();
-        entityPacket.setIdentifiers(Registries.BEDROCK_ENTITY_IDENTIFIERS.get());
-        upstream.sendPacket(entityPacket);
+        sendAvailableEntityIdentifiers();
 
         CreativeContentPacket creativePacket = new CreativeContentPacket();
         creativePacket.setContents(this.itemMappings.getCreativeItems());
@@ -688,6 +689,39 @@ public class GeyserSession implements GeyserConnection, GeyserCommandSource {
         // Ensure client doesn't try and do anything funky; the server handles this for us
         gamerulePacket.getGameRules().add(new GameRuleData<>("spawnradius", 0));
         upstream.sendPacket(gamerulePacket);
+    }
+
+    public void sendAvailableEntityIdentifiers() {
+        NbtMap nbt = Registries.BEDROCK_ENTITY_IDENTIFIERS.get();
+        List<NbtMap> idlist = nbt.getList("idlist", NbtType.COMPOUND);
+        List<GeyserEntityIdentifier> identifiers = new ArrayList<>(idlist.size());
+        for (NbtMap identifier : idlist) {
+            identifiers.add(new GeyserEntityIdentifier(identifier));
+        }
+
+        identifiers.add(new GeyserEntityIdentifier.Builder()
+            .spawnEgg(false)
+            .identifier("geyser:item_display")
+            .summonable(true)
+            .build());
+
+        identifiers.add(new GeyserEntityIdentifier.Builder()
+            .spawnEgg(false)
+            .identifier("geyser:block_display")
+            .summonable(true)
+            .build());
+
+        NbtMapBuilder builder = nbt.toBuilder();
+
+        builder.putList("idlist", NbtType.COMPOUND, identifiers
+                .stream()
+                .map(identifer -> ((GeyserEntityIdentifier) identifer).nbt())
+                .collect(Collectors.toList())
+        );
+
+        AvailableEntityIdentifiersPacket entityPacket = new AvailableEntityIdentifiersPacket();
+        entityPacket.setIdentifiers(builder.build());
+        upstream.sendPacket(entityPacket);
     }
 
     public void authenticate(String username) {

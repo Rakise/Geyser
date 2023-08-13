@@ -36,6 +36,7 @@ import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataType;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.cloudburstmc.protocol.bedrock.packet.SetEntityDataPacket;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.EntityDefinitions;
 import org.geysermc.geyser.entity.type.LivingEntity;
@@ -222,6 +223,20 @@ public class ArmorStandEntity extends LivingEntity {
             positionUpdateRequired = false;
             moveAbsolute(position, yaw, pitch, headYaw, onGround, true);
         }
+    }
+
+    @Override
+    public void updateBedrockEntityProperties() {
+        if (secondEntity != null) {
+            if (propertyManager.hasFloatProperties() || propertyManager.hasIntProperties()) {
+                SetEntityDataPacket entityDataPacket = new SetEntityDataPacket();
+                entityDataPacket.setRuntimeEntityId(secondEntity.geyserId);
+                entityDataPacket.getProperties().getIntProperties().addAll(propertyManager.intProperties());
+                entityDataPacket.getProperties().getFloatProperties().addAll(propertyManager.floatProperties());
+                session.sendUpstreamPacket(entityDataPacket);
+            }
+        }
+        super.updateBedrockEntityProperties();
     }
 
     @Override

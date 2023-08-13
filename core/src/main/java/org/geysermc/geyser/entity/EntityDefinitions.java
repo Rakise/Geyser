@@ -33,6 +33,9 @@ import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.*;
+import org.geysermc.geyser.entity.type.display.BlockDisplayEntity;
+import org.geysermc.geyser.entity.type.display.ItemDisplayEntity;
+import org.geysermc.geyser.entity.type.display.TextDisplayEntity;
 import org.geysermc.geyser.entity.type.living.*;
 import org.geysermc.geyser.entity.type.living.animal.*;
 import org.geysermc.geyser.entity.type.living.animal.horse.*;
@@ -151,6 +154,8 @@ public final class EntityDefinitions {
     public static final EntityDefinition<AbstractSkeletonEntity> STRAY;
     public static final EntityDefinition<StriderEntity> STRIDER;
     public static final EntityDefinition<TadpoleEntity> TADPOLE;
+    public static final EntityDefinition<BlockDisplayEntity> BLOCK_DISPLAY;
+    public static final EntityDefinition<ItemDisplayEntity> ITEM_DISPLAY;
     public static final EntityDefinition<TextDisplayEntity> TEXT_DISPLAY;
     public static final EntityDefinition<TNTEntity> TNT;
     public static final EntityDefinition<MinecartEntity> TNT_MINECART;
@@ -299,6 +304,19 @@ public final class EntityDefinitions {
                     .addTranslator(MetadataType.INT, TNTEntity::setFuseLength)
                     .build();
 
+            GeyserEntityProperties.Builder displayPropBuilder = new GeyserEntityProperties.Builder()
+                .addInt("geyser:state_id")
+                .addInt("geyser:start_interpolation")
+                .addFloat("geyser:interpolation_duration")
+                .addFloat("geyser:rotation_x")
+                .addFloat("geyser:rotation_y")
+                .addFloat("geyser:rotation_z")
+                .addFloat("geyser:translation_x")
+                .addFloat("geyser:translation_y")
+                .addFloat("geyser:translation_z")
+                .addFloat("geyser:scale_x")
+                .addFloat("geyser:scale_y")
+                .addFloat("geyser:scale_z");
             EntityDefinition<Entity> displayBase = EntityDefinition.inherited(entityBase.factory(), entityBase)
                     .addTranslator(null) // Interpolation start ticks
                     .addTranslator(null) // Interpolation duration ID
@@ -314,6 +332,21 @@ public final class EntityDefinitions {
                     .addTranslator(null) // Width
                     .addTranslator(null) // Height
                     .addTranslator(null) // Glow color override
+                    .build();
+            BLOCK_DISPLAY = EntityDefinition.inherited(BlockDisplayEntity::new, displayBase)
+                    .type(EntityType.BLOCK_DISPLAY)
+                    .height(1.975f).width(0.5f)
+                    .properties(displayPropBuilder.entityType("geyser:block_display").build())
+                    .identifier("geyser:block_display")
+                    .addTranslator(MetadataType.BLOCK_STATE, BlockDisplayEntity::setDisplayedBlockState)
+                    .build();
+            ITEM_DISPLAY = EntityDefinition.inherited(ItemDisplayEntity::new, displayBase)
+                    .type(EntityType.ITEM_DISPLAY)
+                    .height(1.975f).width(0.5f)
+                    .properties(displayPropBuilder.entityType("geyser:item_display").build())
+                    .identifier("geyser:item_display")
+                    .addTranslator(MetadataType.ITEM, ItemDisplayEntity::setDisplayedItem)
+                    .addTranslator(MetadataType.BYTE, ItemDisplayEntity::setDisplayType)
                     .build();
             TEXT_DISPLAY = EntityDefinition.inherited(TextDisplayEntity::new, displayBase)
                     .type(EntityType.TEXT_DISPLAY)
@@ -461,27 +494,27 @@ public final class EntityDefinitions {
                 .type(EntityType.ARMOR_STAND)
                 .height(1.975f).width(0.5f)
                 .properties(new GeyserEntityProperties.Builder()
-                    .addBooleanProperty("geyser:arms")
-                    .addBooleanProperty("geyser:no_bp")
-                    .addBooleanProperty("geyser:small")
-                    .addFloatProperty("geyser:he_rx", -180F, 180F)
-                    .addFloatProperty("geyser:he_ry", -180F, 180F)
-                    .addFloatProperty("geyser:he_rz", -180F, 180F)
-                    .addFloatProperty("geyser:bo_rx", -180F, 180F)
-                    .addFloatProperty("geyser:bo_ry", -180F, 180F)
-                    .addFloatProperty("geyser:bo_rz", -180F, 180F)
-                    .addFloatProperty("geyser:la_rx", -180F, 180F)
-                    .addFloatProperty("geyser:la_ry", -180F, 180F)
-                    .addFloatProperty("geyser:la_rz", -180F, 180F)
-                    .addFloatProperty("geyser:ra_rx", -180F, 180F)
-                    .addFloatProperty("geyser:ra_ry", -180F, 180F)
-                    .addFloatProperty("geyser:ra_rz", -180F, 180F)
-                    .addFloatProperty("geyser:ll_rx", -180F, 180F)
-                    .addFloatProperty("geyser:ll_ry", -180F, 180F)
-                    .addFloatProperty("geyser:ll_rz", -180F, 180F)
-                    .addFloatProperty("geyser:rl_rx", -180F, 180F)
-                    .addFloatProperty("geyser:rl_ry", -180F, 180F)
-                    .addFloatProperty("geyser:rl_rz", -180F, 180F)
+                    .addBoolean("geyser:arms")
+                    .addBoolean("geyser:no_bp")
+                    .addBoolean("geyser:small")
+                    .addFloat("geyser:he_rx", -180F, 180F)
+                    .addFloat("geyser:he_ry", -180F, 180F)
+                    .addFloat("geyser:he_rz", -180F, 180F)
+                    .addFloat("geyser:bo_rx", -180F, 180F)
+                    .addFloat("geyser:bo_ry", -180F, 180F)
+                    .addFloat("geyser:bo_rz", -180F, 180F)
+                    .addFloat("geyser:la_rx", -180F, 180F)
+                    .addFloat("geyser:la_ry", -180F, 180F)
+                    .addFloat("geyser:la_rz", -180F, 180F)
+                    .addFloat("geyser:ra_rx", -180F, 180F)
+                    .addFloat("geyser:ra_ry", -180F, 180F)
+                    .addFloat("geyser:ra_rz", -180F, 180F)
+                    .addFloat("geyser:ll_rx", -180F, 180F)
+                    .addFloat("geyser:ll_ry", -180F, 180F)
+                    .addFloat("geyser:ll_rz", -180F, 180F)
+                    .addFloat("geyser:rl_rx", -180F, 180F)
+                    .addFloat("geyser:rl_ry", -180F, 180F)
+                    .addFloat("geyser:rl_rz", -180F, 180F)
                     .entityType("minecraft:armor_stand")
                     .build())
                 .addTranslator(MetadataType.BYTE, ArmorStandEntity::setArmorStandFlags)

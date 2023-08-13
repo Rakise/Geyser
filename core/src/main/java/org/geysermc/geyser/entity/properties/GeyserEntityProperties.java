@@ -90,7 +90,7 @@ public class GeyserEntityProperties {
             return this;
         }
 
-        public Builder addIntProperty(@NonNull String name, int min, int max) {
+        public Builder addInt(@NonNull String name, int min, int max) {
             if (propertyIndices.containsKey(name)) {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
@@ -101,7 +101,7 @@ public class GeyserEntityProperties {
             return this;
         }
 
-        public Builder addIntProperty(@NonNull String name) {
+        public Builder addInt(@NonNull String name) {
             if (propertyIndices.containsKey(name)) {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
@@ -112,7 +112,7 @@ public class GeyserEntityProperties {
             return this;
         }
 
-        public Builder addFloatProperty(@NonNull String name, float min, float max) {
+        public Builder addFloat(@NonNull String name, float min, float max) {
             if (propertyIndices.containsKey(name)) {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
@@ -123,7 +123,7 @@ public class GeyserEntityProperties {
             return this;
         }
 
-        public Builder addFloatProperty(@NonNull String name) {
+        public Builder addFloat(@NonNull String name) {
             if (propertyIndices.containsKey(name)) {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
@@ -134,7 +134,7 @@ public class GeyserEntityProperties {
             return this;
         }
 
-        public Builder addBooleanProperty(@NonNull String name) {
+        public Builder addBoolean(@NonNull String name) {
             if (propertyIndices.containsKey(name)) {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
@@ -145,7 +145,7 @@ public class GeyserEntityProperties {
             return this;
         }
 
-        public Builder addEnumProperty(@NonNull String name, List<String> values) {
+        public Builder addEnum(@NonNull String name, List<String> values) {
             if (propertyIndices.containsKey(name)) {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
