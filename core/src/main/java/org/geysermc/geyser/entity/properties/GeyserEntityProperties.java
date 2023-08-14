@@ -128,7 +128,7 @@ public class GeyserEntityProperties {
                 throw new IllegalArgumentException(
                         "Property with name " + name + " already exists for entity " + entityType);
             }
-            PropertyType property = new FloatProperty(name, Float.MIN_VALUE, Float.MAX_VALUE);
+            PropertyType property = new FloatProperty(name, Float.MIN_NORMAL, Float.MAX_VALUE);
             this.properties.add(property);
             propertyIndices.put(name, properties.size() - 1);
             return this;

@@ -306,25 +306,25 @@ public final class EntityDefinitions {
                     .build();
 
             GeyserEntityProperties.Builder displayPropBuilder = new GeyserEntityProperties.Builder()
-                .addInt("geyser:state_id")
-                .addInt("geyser:start_interpolation")
-                .addFloat("geyser:interpolation_duration")
-                .addFloat("geyser:rotation_x", -180F, 180F)
-                .addFloat("geyser:rotation_y", -180F, 180F)
-                .addFloat("geyser:rotation_z", -180F, 180F)
-                .addFloat("geyser:translation_x", -180F, 180F)
-                .addFloat("geyser:translation_y", -180F, 180F)
-                .addFloat("geyser:translation_z", -180F, 180F)
-                .addFloat("geyser:scale_x", -180F, 180F)
-                .addFloat("geyser:scale_y", -180F, 180F)
-                .addFloat("geyser:scale_z", -180F, 180F);
+                .addInt("geyser:s_id")
+                .addInt("geyser:s_int")
+                .addFloat("geyser:i_dur")
+                .addFloat("geyser:r_x", -180F, 180F)
+                .addFloat("geyser:r_y", -180F, 180F)
+                .addFloat("geyser:r_z", -180F, 180F)
+                .addFloat("geyser:t_x")
+                .addFloat("geyser:t_y")
+                .addFloat("geyser:t_z")
+                .addFloat("geyser:s_x")
+                .addFloat("geyser:s_y")
+                .addFloat("geyser:s_z");
             EntityDefinition<DisplayEntity> displayBase = EntityDefinition.inherited(DisplayEntity::new, entityBase)
                     .addTranslator(null) // Interpolation start ticks
                     .addTranslator(null) // Interpolation duration ID
                     .addTranslator(MetadataType.VECTOR3, DisplayEntity::setTranslation) // Translation
-                    .addTranslator(null) // Scale
-                    .addTranslator(null) // Left rotation
-                    .addTranslator(null) // Right rotation
+                    .addTranslator(MetadataType.VECTOR3, DisplayEntity::setScale) // Scale
+                    .addTranslator(MetadataType.QUATERNION, DisplayEntity::setLeftRotation) // Left rotation
+                    .addTranslator(MetadataType.QUATERNION, DisplayEntity::setRightRotation) // Right rotation
                     .addTranslator(null) // Billboard render constraints
                     .addTranslator(null) // Brightness override
                     .addTranslator(null) // View range

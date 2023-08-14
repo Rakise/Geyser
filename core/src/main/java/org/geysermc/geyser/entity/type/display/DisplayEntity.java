@@ -26,9 +26,9 @@
 package org.geysermc.geyser.entity.type.display;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
+import org.checkerframework.checker.units.qual.s;
+import org.cloudburstmc.math.imaginary.Quaterniond;
+import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector4f;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
@@ -43,6 +43,9 @@ import java.util.UUID;
 public class DisplayEntity extends Entity {
 
     protected ItemData hand = ItemData.AIR;
+    protected Vector3f translation = Vector3f.from(0, 0, 0);
+    protected Vector3f scale = Vector3f.from(1, 1, 1);
+    protected Vector3f rotation = Vector3f.from(0, 0, 0);
 
     public DisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition,
             Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
@@ -64,10 +67,60 @@ public class DisplayEntity extends Entity {
     }
 
     public void setTranslation(EntityMetadata<Vector3f, ?> entityMetadata) {
-        hackRotation(entityMetadata.getValue().getX(), entityMetadata.getValue().getY(), entityMetadata.getValue().getZ());
+        this.translation = translation.add(entityMetadata.getValue());
     }
 
-    public void hackRotation(float x, float y, float z) {
+    public void setScale(EntityMetadata<Vector3f, ?> entityMetadata) {
+        this.scale = scale.mul(entityMetadata.getValue());
+    }
+
+    public void setLeftRotation(EntityMetadata<Vector4f, ?> entityMetadata) {
+        setRotation(entityMetadata.getValue());
+    }
+
+    public void setRightRotation(EntityMetadata<Vector4f, ?> entityMetadata) {
+        setRotation(entityMetadata.getValue());
+    }
+
+    protected void setRotation(Vector4f qRotation) {
+        Quaternionf q = Quaternionf.from(qRotation.getX(), qRotation.getY(), qRotation.getZ(), qRotation.getW());
+        Vector3f s = getNonNormalScale(q);
+        Vector3f r = toEulerZYX(q);
+
+        this.scale = scale.mul(s);
+        this.rotation = rotation.add(r);
+    }
+
+    protected Vector3f getNonNormalScale(Quaternionf q) {
+        Quaternionf qx = q.mul(0, 1, 0, 0).mul(q.conjugate());
+        Quaternionf qy = q.mul(0, 0, 1, 0).mul(q.conjugate());
+        Quaternionf qz = q.mul(0, 0, 0, 1).mul(q.conjugate());
+
+        float x = (float) Math.sqrt(qx.getX() * qx.getX() + qx.getY() * qx.getY() + qx.getZ() * qx.getZ());
+        float y = (float) Math.sqrt(qy.getX() * qy.getX() + qy.getY() * qy.getY() + qy.getZ() * qy.getZ());
+        float z = (float) Math.sqrt(qz.getX() * qz.getX() + qz.getY() * qz.getY() + qz.getZ() * qz.getZ());
+
+        return Vector3f.from(x, y, z);
+    }
+
+    protected Vector3f toEulerZYX(Quaternionf q) {
+        Quaternionf qn = q.normalize();
+
+        float w = qn.getW();
+        float x = qn.getX();
+        float y = qn.getY();
+        float z = qn.getZ();
+
+        float yaw = (float) Math.atan2(2 * (y * w - x * z), 1 - 2 * (y * y + z * z));
+        float pitch = (float) Math.asin(2 * (x * y + z * w));
+        float roll = (float) Math.atan2(2 * (x * w - y * z), 1 - 2 * (x * x + z * z));
+
+        return Vector3f.from(yaw, pitch, roll);
+    }
+
+
+
+    protected void hackRotation(float x, float y, float z) {
         propertyManager.add("geyser:rotation_x", x);
         propertyManager.add("geyser:rotation_y", y);
         propertyManager.add("geyser:rotation_z", z);
