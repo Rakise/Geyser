@@ -26,8 +26,6 @@
 package org.geysermc.geyser.entity.type.display;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import org.checkerframework.checker.units.qual.s;
-import org.cloudburstmc.math.imaginary.Quaterniond;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector4f;
