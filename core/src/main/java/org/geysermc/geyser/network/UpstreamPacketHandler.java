@@ -234,11 +234,6 @@ public class UpstreamPacketHandler extends LoggingPacketHandler {
                 // Entity properties for GeyserOptionalPack
                 stackPacket.getExperiments().add(new ExperimentData("upcoming_creator_features", true));
 
-                if (GameProtocol.isPre1_20(session)) {
-                    stackPacket.getExperiments().add(new ExperimentData("next_major_update", true));
-                    stackPacket.getExperiments().add(new ExperimentData("sniffer", true));
-                }
-
                 session.sendUpstreamPacket(stackPacket);
                 break;
 
