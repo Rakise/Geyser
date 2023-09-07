@@ -115,6 +115,10 @@ public class GeyserEntityPropertyManager {
         return !this.intEntityProperties.isEmpty();
     }
 
+    public boolean hasProperties() {
+        return hasFloatProperties() || hasIntProperties();
+    }
+
     public List<IntEntityProperty> intProperties() {
         return this.intEntityProperties;
     }

@@ -142,10 +142,11 @@ public class Entity implements GeyserEntity {
 
         this.valid = false;
 
+        this.propertyManager = new GeyserEntityPropertyManager(definition.registeredProperties());
+
         setPosition(position);
         setAirSupply(getMaxAir());
         initializeMetadata();
-        this.propertyManager = new GeyserEntityPropertyManager(definition.registeredProperties());
     }
 
     /**
@@ -179,8 +180,6 @@ public class Entity implements GeyserEntity {
         addEntityPacket.setHeadRotation(headYaw);
         addEntityPacket.setBodyRotation(yaw); // TODO: This should be bodyYaw
         addEntityPacket.getMetadata().putFlags(flags);
-        addEntityPacket.getProperties().getFloatProperties().addAll(propertyManager.floatProperties());
-        addEntityPacket.getProperties().getIntProperties().addAll(propertyManager.intProperties());
         dirtyMetadata.apply(addEntityPacket.getMetadata());
         addAdditionalSpawnData(addEntityPacket);
 
@@ -369,7 +368,7 @@ public class Entity implements GeyserEntity {
             return;
         }
 
-        if (propertyManager.hasFloatProperties() || propertyManager.hasIntProperties()) {
+        if (propertyManager.hasProperties()) {
             SetEntityDataPacket entityDataPacket = new SetEntityDataPacket();
             entityDataPacket.setRuntimeEntityId(geyserId);
             propertyManager.applyIntProperties(entityDataPacket.getProperties().getIntProperties());

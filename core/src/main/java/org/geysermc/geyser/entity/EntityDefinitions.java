@@ -34,7 +34,7 @@ import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.*;
 import org.geysermc.geyser.entity.type.display.BlockDisplayEntity;
-import org.geysermc.geyser.entity.type.display.DisplayEntity;
+import org.geysermc.geyser.entity.type.display.SlotDisplayEntity;
 import org.geysermc.geyser.entity.type.display.ItemDisplayEntity;
 import org.geysermc.geyser.entity.type.display.TextDisplayEntity;
 import org.geysermc.geyser.entity.type.living.*;
@@ -317,14 +317,15 @@ public final class EntityDefinitions {
                 .addFloat("geyser:t_z")
                 .addFloat("geyser:s_x")
                 .addFloat("geyser:s_y")
-                .addFloat("geyser:s_z");
-            EntityDefinition<DisplayEntity> displayBase = EntityDefinition.inherited(DisplayEntity::new, entityBase)
+                .addFloat("geyser:s_z")
+                .addFloat("geyser:s_q");
+            EntityDefinition<SlotDisplayEntity> slotDisplayBase = EntityDefinition.inherited(SlotDisplayEntity::new, entityBase)
                     .addTranslator(null) // Interpolation start ticks
                     .addTranslator(null) // Interpolation duration ID
-                    .addTranslator(MetadataType.VECTOR3, DisplayEntity::setTranslation) // Translation
-                    .addTranslator(MetadataType.VECTOR3, DisplayEntity::setScale) // Scale
-                    .addTranslator(MetadataType.QUATERNION, DisplayEntity::setLeftRotation) // Left rotation
-                    .addTranslator(MetadataType.QUATERNION, DisplayEntity::setRightRotation) // Right rotation
+                    .addTranslator(MetadataType.VECTOR3, SlotDisplayEntity::setTranslation) // Translation
+                    .addTranslator(MetadataType.VECTOR3, SlotDisplayEntity::setScale) // Scale
+                    .addTranslator(MetadataType.QUATERNION, SlotDisplayEntity::setLeftRotation) // Left rotation
+                    .addTranslator(MetadataType.QUATERNION, SlotDisplayEntity::setRightRotation) // Right rotation
                     .addTranslator(null) // Billboard render constraints
                     .addTranslator(null) // Brightness override
                     .addTranslator(null) // View range
@@ -334,20 +335,36 @@ public final class EntityDefinitions {
                     .addTranslator(null) // Height
                     .addTranslator(null) // Glow color override
                     .build();
-            BLOCK_DISPLAY = EntityDefinition.inherited(BlockDisplayEntity::new, displayBase)
+            BLOCK_DISPLAY = EntityDefinition.inherited(BlockDisplayEntity::new, slotDisplayBase)
                     .type(EntityType.BLOCK_DISPLAY)
                     .height(1.975f).width(0.5f)
                     .properties(displayPropBuilder.entityType("geyser:block_display").build())
                     .identifier("geyser:block_display")
                     .addTranslator(MetadataType.BLOCK_STATE, BlockDisplayEntity::setDisplayedBlockState)
                     .build();
-            ITEM_DISPLAY = EntityDefinition.inherited(ItemDisplayEntity::new, displayBase)
+            ITEM_DISPLAY = EntityDefinition.inherited(ItemDisplayEntity::new, slotDisplayBase)
                     .type(EntityType.ITEM_DISPLAY)
                     .height(1.975f).width(0.5f)
                     .properties(displayPropBuilder.entityType("geyser:item_display").build())
                     .identifier("geyser:item_display")
                     .addTranslator(MetadataType.ITEM, ItemDisplayEntity::setDisplayedItem)
                     .addTranslator(MetadataType.BYTE, ItemDisplayEntity::setDisplayType)
+                    .build();
+            EntityDefinition<Entity> displayBase = EntityDefinition.inherited(entityBase.factory(), entityBase)
+                    .addTranslator(null) // Interpolation start ticks
+                    .addTranslator(null) // Interpolation duration ID
+                    .addTranslator(null) // Translation
+                    .addTranslator(null) // Scale
+                    .addTranslator(null) // Left rotation
+                    .addTranslator(null) // Right rotation
+                    .addTranslator(null) // Billboard render constraints
+                    .addTranslator(null) // Brightness override
+                    .addTranslator(null) // View range
+                    .addTranslator(null) // Shadow radius
+                    .addTranslator(null) // Shadow strength
+                    .addTranslator(null) // Width
+                    .addTranslator(null) // Height
+                    .addTranslator(null) // Glow color override
                     .build();
             TEXT_DISPLAY = EntityDefinition.inherited(TextDisplayEntity::new, displayBase)
                     .type(EntityType.TEXT_DISPLAY)
