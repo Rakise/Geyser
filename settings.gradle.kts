@@ -73,3 +73,18 @@ project(":fabric").projectDir = file("bootstrap/fabric")
 project(":spigot").projectDir = file("bootstrap/spigot")
 project(":standalone").projectDir = file("bootstrap/standalone")
 project(":velocity").projectDir = file("bootstrap/velocity")
+
+// Attach Gradle Build Scans in GH Actions
+plugins {
+    id("com.gradle.enterprise") version "3.15"
+}
+
+gradleEnterprise {
+    if (System.getenv("CI") != null) {
+        buildScan {
+            publishAlways()
+            termsOfServiceUrl.set("https://gradle.com/terms-of-service")
+            termsOfServiceAgree.set("yes")
+        }
+    }
+}
