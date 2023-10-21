@@ -83,8 +83,8 @@ gradleEnterprise {
     if (System.getenv("CI") != null) {
         buildScan {
             publishAlways()
-            termsOfServiceUrl.set("https://gradle.com/terms-of-service")
-            termsOfServiceAgree.set("yes")
+            termsOfServiceUrl = "https://gradle.com/terms-of-service"
+            termsOfServiceAgree = "yes"
         }
     }
 }
