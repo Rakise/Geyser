@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,23 +25,29 @@
 
 package org.geysermc.geyser.translator.protocol.bedrock.entity.player;
 
-import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerCommandPacket;
-import org.cloudburstmc.protocol.bedrock.packet.RiderJumpPacket;
-import org.geysermc.geyser.entity.type.Entity;
-import org.geysermc.geyser.entity.type.living.animal.horse.AbstractHorseEntity;
+import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import org.cloudburstmc.protocol.bedrock.packet.SetDefaultGameTypePacket;
+import org.cloudburstmc.protocol.bedrock.packet.SetPlayerGameTypePacket;
 import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.geyser.translator.protocol.PacketTranslator;
 import org.geysermc.geyser.translator.protocol.Translator;
+import org.geysermc.geyser.util.EntityUtils;
 
-@Translator(packet = RiderJumpPacket.class)
-public class BedrockRiderJumpTranslator extends PacketTranslator<RiderJumpPacket> {
+@Translator(packet = SetDefaultGameTypePacket.class)
+public class BedrockSetDefaultGameTypeTranslator extends PacketTranslator<SetDefaultGameTypePacket> {
+
+    /**
+     * Sets the default game mode for the server via the Bedrock client's "world" menu (given sufficient permissions).
+     */
     @Override
-    public void translate(GeyserSession session, RiderJumpPacket packet) {
-        Entity vehicle = session.getPlayerEntity().getVehicle();
-        if (vehicle instanceof AbstractHorseEntity) {
-            ServerboundPlayerCommandPacket playerCommandPacket = new ServerboundPlayerCommandPacket(vehicle.getEntityId(), PlayerState.START_HORSE_JUMP, packet.getJumpStrength());
-            session.sendDownstreamGamePacket(playerCommandPacket);
+    public void translate(GeyserSession session, SetDefaultGameTypePacket packet) {
+        if (session.getOpPermissionLevel() >= 2 && session.hasPermission("geyser.settings.server")) {
+            session.getGeyser().getWorldManager().setDefaultGameMode(session, GameMode.byId(packet.getGamemode()));
         }
+        // Stop the client from updating their own Gamemode without telling the server
+        // Can occur when client Gamemode is set to "default", and default game mode is changed.
+        SetPlayerGameTypePacket playerGameTypePacket = new SetPlayerGameTypePacket();
+        playerGameTypePacket.setGamemode(EntityUtils.toBedrockGamemode(session.getGameMode()).ordinal());
+        session.sendUpstreamPacket(playerGameTypePacket);
     }
 }
